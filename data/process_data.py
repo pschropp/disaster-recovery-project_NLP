@@ -17,7 +17,7 @@ def load_data(messages_filepath: str, categories_filepath: str) -> pd.DataFrame:
     messages = pd.read_csv(messages_filepath)
     categories = pd.read_csv(categories_filepath)
     # merge datasets
-    return messages.merge(categories, on='id', how='left')
+    return messages.merge(categories, on='id', how='left').drop('id', axis=1, inplace=True)
 
 
 def clean_data(df: pd.DataFrame) -> pd.DataFrame:
@@ -46,6 +46,8 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     for column in categories:
         categories[column] = categories[column].str[-1:]  # set each value to be the last character of the string
         categories[column] = categories[column].astype(int)  # convert column from string to numeric
+    # as there are entries of '2' in column 'related', which go back the original value of 'related-2', these will be replaced by the value '1'
+    categories['related'] = categories['related'].apply(lambda x: x if x in [0,1] else 1)
 
     # replace categories column in df with new category columns
     df.drop('categories', axis=1, inplace=True)  # drop the original categories column from `df`

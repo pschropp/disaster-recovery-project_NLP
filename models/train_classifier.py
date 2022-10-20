@@ -34,7 +34,7 @@ def load_data(database_filepath) -> Tuple[np.ndarray, np.ndarray, List[str]]:
     engine = create_engine(path)
     df = pd.read_sql_table('messages', engine)
     X = df['message'].values
-    y_df = df.drop(['message', 'original', 'genre'], axis=1).values
+    y_df = df.drop(['message', 'original', 'genre'], axis=1)
     Y = y_df.values
     return X, Y, y_df.columns
 

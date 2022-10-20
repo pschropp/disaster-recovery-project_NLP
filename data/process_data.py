@@ -17,7 +17,7 @@ def load_data(messages_filepath: str, categories_filepath: str) -> pd.DataFrame:
     messages = pd.read_csv(messages_filepath)
     categories = pd.read_csv(categories_filepath)
     # merge datasets
-    return messages.merge(categories, on='id', how='left').drop('id', axis=1, inplace=True)
+    return messages.merge(categories, on='id', how='left').drop('id', axis=1)
 
 
 def clean_data(df: pd.DataFrame) -> pd.DataFrame:

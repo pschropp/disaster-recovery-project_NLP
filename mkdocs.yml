@@ -8,10 +8,6 @@ copyright: passl
 nav:
   - Home: index.md
   - Setup: setup.md
-  - Repo Guidelines: repo_instructions.md
-  - HowTo Doc: how_to_doc.md
-  - User Reference:
-  - Code Reference:
 
 theme:
   name: material  # options: 1) comment out for default template 2) readthedocs 3) material. all options following in theme for material only. comment out if using other theme.

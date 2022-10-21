@@ -39,16 +39,14 @@ model = joblib.load("../models/classifier.pkl")
 def index():
     
     # extract data needed for visuals
-    # TODO: Below is an example - modify to extract data for your own visuals
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
     
     cat_count = df.drop(['message', 'original', 'genre'], axis=1).sum(axis=0).sort_values(ascending=False)
-    percentage=cat_count
+    percentage=cat_count.copy()
     percentage['percent'] = round(cat_count / df.shape[0] * 100).apply(lambda x: str(x) + '%')
         
     # create visuals
-    # TODO: Below is an example - modify to create your own visuals
     graphs = [
         {
             'data': [

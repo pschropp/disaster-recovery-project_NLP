@@ -1,6 +1,7 @@
 import os
 import sys
 import nltk
+
 nltk.download(['punkt', 'wordnet', 'averaged_perceptron_tagger'])
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
@@ -9,7 +10,7 @@ import numpy as np
 import pandas as pd
 from sqlalchemy import create_engine
 
-from typing import Tuple, List
+from typing import Tuple, List, Any, Optional, Dict, Union
 
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.pipeline import Pipeline
@@ -20,7 +21,7 @@ from sklearn.metrics import classification_report
 import joblib
 
 
-def load_data(database_filepath) -> Tuple[np.ndarray, np.ndarray, List[str]]:
+def load_data(database_filepath: str) -> Tuple[np.ndarray, np.ndarray, List[str]]:
     """ Load and prepare data from sql db
 
     Args:
@@ -39,46 +40,51 @@ def load_data(database_filepath) -> Tuple[np.ndarray, np.ndarray, List[str]]:
     return X, Y, y_df.columns
 
 
-def tokenize(text: str)->List[str]:
-    """ Convert to lowercase, remove punctuation, Tokenize string, remove stopwords, lemmatize
+def tokenize(text: str) -> List[str]:
+    """ Tokenize string
 
-    Args:
-        text: text to tokenize
+Args:
+    text: text to tokenize
 
-    Returns:
-        list of tokenized strings
-    """
-    # normalize case and remove punctuation
-    text = text.lower()
-    text = re.sub(r"[^a-zA-Z0-9]", " ", text)
-    
+Returns:
+    list of tokenized strings
+"""
     tokens = word_tokenize(text)
-    
-    # remove stopwords
-    tokens = [w for w in tokens if w not in stopwords.words("english")]
-    
-    # lemmatize
-    lemmatizer = WordNetLemmatizer()        
-    clean_tokens = [lemmatizer.lemmatize(w) for w in tokens]
+    lemmatizer = WordNetLemmatizer()
+
+    clean_tokens = []
+    for tok in tokens:
+        clean_tok = lemmatizer.lemmatize(tok).lower().strip()
+        clean_tokens.append(clean_tok)
 
     return clean_tokens
 
 
-def build_model() -> Pipeline:
-    """ Create pipeline
+def build_model(classifier: Any = RandomForestClassifier(),
+                grid_search_parameters: Optional[Dict[str, List[str]]] = None) -> Union[Pipeline, GridSearchCV]:
+    """ Build model based on parameters.
+
+    As default, a random forest classifier is used. Grid search will be performed, if a parameter list for grid search
+    is passed (default being no gridsearch).
 
     Returns:
-        pipeline
+        model
     """
     pipeline = Pipeline([
         ('vect', CountVectorizer(tokenizer=tokenize)),
         ('tfidf', TfidfTransformer()),
-        ('clf', MultiOutputClassifier(RandomForestClassifier()))
+        ('clf', MultiOutputClassifier(classifier))
     ])
-    return pipeline
+
+    if grid_search_parameters:
+        model = GridSearchCV(pipeline, param_grid=grid_search_parameters, n_jobs=-1, verbose=3)
+    else:
+        model = pipeline
+
+    return model
 
 
-def evaluate_model(model, X_test, Y_test, category_names) -> None:
+def evaluate_model(model: Any, X_test: List[str], Y_test: List[str], category_names: List[str]) -> None:
     """ Predict values and print model scores
 
     Args:
@@ -98,8 +104,8 @@ def evaluate_model(model, X_test, Y_test, category_names) -> None:
         print(classification_report(y_test_df[col], y_pred_df[col]))
 
 
-def save_model(model, model_filepath) -> None:
-    """ Save model
+def save_model(model: Any, model_filepath: str) -> None:
+    """ Save model as pickle file
 
     Args:
         model: pipeline to save
@@ -119,7 +125,8 @@ def main():
         X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2)
 
         print('Building model...')
-        model = build_model()
+        grid_search_param = {"clf__estimator__max_features": ["sqrt", "log2"]}
+        model = build_model(grid_search_parameters=grid_search_param)
 
         print('Training model...')
         model.fit(X_train, Y_train)

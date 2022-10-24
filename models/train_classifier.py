@@ -39,22 +39,27 @@ def load_data(database_filepath) -> Tuple[np.ndarray, np.ndarray, List[str]]:
     return X, Y, y_df.columns
 
 
-def tokenize(text) -> List[str]:
-    """ Tokenize string
+def tokenize(text: str)->List[str]:
+    """ Convert to lowercase, remove punctuation, Tokenize string, remove stopwords, lemmatize
 
-Args:
-    text: text to tokenize
+    Args:
+        text: text to tokenize
 
-Returns:
-    list of tokenized strings
-"""
+    Returns:
+        list of tokenized strings
+    """
+    # normalize case and remove punctuation
+    text = text.lower()
+    text = re.sub(r"[^a-zA-Z0-9]", " ", text)
+    
     tokens = word_tokenize(text)
-    lemmatizer = WordNetLemmatizer()
-
-    clean_tokens = []
-    for tok in tokens:
-        clean_tok = lemmatizer.lemmatize(tok).lower().strip()
-        clean_tokens.append(clean_tok)
+    
+    # remove stopwords
+    tokens = [w for w in tokens if w not in stopwords.words("english")]
+    
+    # lemmatize
+    lemmatizer = WordNetLemmatizer()        
+    clean_tokens = [lemmatizer.lemmatize(w) for w in tokens]
 
     return clean_tokens
 

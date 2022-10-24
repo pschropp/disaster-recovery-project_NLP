@@ -40,4 +40,6 @@ Using a dataset of labeled messages a model ist trained to classify messages int
 Browse to the website (http://0.0.0.0:3001/, if running from local), type a message in English and hit the button 'Classify Message'. The categories which are attributed to the message are highlighted.
 
 ### License and Acknowledgements <a name="license"></a>
-For information about the dataset refer to Udacity. Feel free to use the code in any way you like to.
+The data which is used in this project was provided by [Figure Eight (now Appen)](https://appen.com/).
+
+Feel free to use the code in any way you like to.

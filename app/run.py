@@ -75,12 +75,13 @@ def index():
                 )
             ],
             'layout': {
-                'title': 'Count (+ Percentage) of Categorizations in all messages',
+                'title': 'Count of Categorizations in all messages',
                 'yaxis': {
                     'title': "Count of Categorizations"
                 },
                 'xaxis': {
-                    'title': "Category"
+                    'title': "Category",
+                    'tickangle':35
                 }
             }
         }

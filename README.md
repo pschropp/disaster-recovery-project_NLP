@@ -39,6 +39,10 @@ Using a dataset of labeled messages a model ist trained to classify messages int
 ### Usage <a name="usage"></a>
 Browse to the website (http://0.0.0.0:3001/, if running from local), type a message in English and hit the button 'Classify Message'. The categories which are attributed to the message are highlighted.
 
+![landingpage](/docs/landingpage.png?raw=true "Landingpage")
+
+![resultpage](/docs/resultpage.png?raw=true "Landingpage")
+
 ### License and Acknowledgements <a name="license"></a>
 The data which is used in this project was provided by [Figure Eight (now Appen)](https://appen.com/).
 
